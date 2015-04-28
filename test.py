@@ -9,3 +9,7 @@ def zev_other_function():
 
 def holden_funk(yo):
     return yo
+
+def tom_jazz(smooth):
+    print smooth
+    return smooth
