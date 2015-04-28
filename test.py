@@ -16,3 +16,6 @@ def tom_jazz(smooth):
 
 def master():
     print "This was added while everyone was working on their branches."
+
+def brubeck():
+    return 13/8
