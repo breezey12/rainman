@@ -13,3 +13,6 @@ def holden_funk(yo):
 def tom_jazz(smooth):
     print smooth
     return smooth
+
+def brubeck():
+    return 13/8
