@@ -17,11 +17,20 @@ def send_text_message(user_phone_number, message):
     client = TwilioRestClient(app.config['ACCOUNT_SID'], app.config['AUTH_TOKEN'])
     client.messages.create(to=user_phone_number, from_="+18024488492", body=message)
 
-def make_sure_user_doesnt_already_exist():
+
+def make_sure_user_doesnt_already_exist(entered_phone_number):
     """connect to the database and make sure the phone number entered isn't already there.
-    This function should be called by signup()
+    This function should be called by add_user()
     """
-    pass
+    with connect_db() as connection:
+        c = connection.cursor()
+        c.execute("SELECT * FROM user_info WHERE phone_number=?", entered_phone_number)
+        info = c.fetchall()
+    if info[0] == entered_phone_number:
+        flash("This phone number is already subscribed at zip code %s. If you would like to add a different number, please try again.", info[1])
+        return redirect(url_for('home'))
+    else:
+        pass
 
 
 ##################################################################################
@@ -59,7 +68,8 @@ def add_user():
     phone_number = "+1" + request.form['phone_number']
     if not zipcode or not phone_number:
         flash("Please fill out all fields.")
-        return redirect(url_for('add_user'))
+        return redirect(url_for('home'))
+    make_sure_user_doesnt_already_exist(phone_number)
     with connect_db() as connection:
         c = connection.cursor()
         c.execute("INSERT INTO user_info VALUES(?,?,?,?)", [phone_number, zipcode, 0, 0])
