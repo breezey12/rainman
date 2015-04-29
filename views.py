@@ -56,7 +56,7 @@ def home():
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
     zipcode = request.form['zipcode']
-    phone_number = request.form['phone_number']
+    phone_number = "+1" + request.form['phone_number']
     if not zipcode or not phone_number:
         flash("Please fill out all fields.")
         return redirect(url_for('add_user'))
