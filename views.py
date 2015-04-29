@@ -11,19 +11,25 @@ def connect_db():
 
 
 def make_sure_user_doesnt_already_exist():
+    """connect to the database and make sure the phone number entered 
+    isn't already in there.
+    This function should be called by signup()
+    """
+    pass
+
+##################################################################
+##### we need to validate the phone number and zip code on the front end #####
+
+
+
+def send_test_message_to_new_user():
+    """send test text message to user. only add user to DB if verified."""
     pass
 
 
-def validate_phone_num():
-    pass
-
-
-def validate_zipcode():
-    pass
-
-
-def verify_sms_ownership():
-    pass
+def grab_new_user_response():
+    """receives response from new user and maybe eventually
+    parses it out for different actions."""
 
 
 def stop_spamming_me():
@@ -32,17 +38,12 @@ def stop_spamming_me():
     """
     pass
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route('/')
 def home():
-   """logs user into dashboard"""
-   return render_template('home.html')
-
-
-@app.route('/signup')
-def signup():
     """collects username, password, zipcode and phone number
     and pushes it into the database"""
-    return render_template('signup.html')
+    return render_template('home.html')
 
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
@@ -53,6 +54,6 @@ def add_user():
         return redirect(url_for('signup'))
     with connect_db() as connection:
         c = connection.cursor()
-        c.execute("INSERT INTO user_info VALUES(?,?,?,?)", [username, password, zipcode, phone_number])
+        c.execute("INSERT INTO user_info VALUES(?,?,?,?)", [phone_number, zipcode, 0, 0])
     confirmation_message = "Okay, cool!  You're gonna get weather updates on your phone, dude."
     return redirect(url_for('home'))

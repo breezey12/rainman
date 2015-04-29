@@ -19,3 +19,5 @@ def master():
 
 def brubeck():
     return 13/8
+
+print "something"
