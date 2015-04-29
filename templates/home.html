@@ -3,13 +3,15 @@
     {% for message in get_flashed_messages() %}
         {{ message }}
     {% endfor %}
-    <h2>Weather App</h2>
+    <h2>Welcome to RainMan.io!</h2>
+    <h3>Whether the weather brings rain or shine, you will always be prepared with our timely and convenient SMS reminders of the forecast and what clothing/apparel will make you most prepared for a comfortable day ahead!</h3>
+    <h3>Sign up to get convenient SMS weather updates!</h3>
     <form method="post" action="">
-        Username:<input type="text" name="username" value="{{ request.form.username }}">
-        Password:<input type="password" name="password" value="{{ request.form.username }}">
+        Phone Number:<input type="text" name="phone_number" value="{{ request.form.phone_number }}">
+        Zip Code:<input type="text" name="zipcode" value="{{ request.form.zipcode }}">
         {% if error %}
             <span>{{ error }}</span>
         {% endif %}
-            <input type="submit" value="Log In">
+            <input type="submit" value="Sign Up">
     </form>
 {% endblock %}
