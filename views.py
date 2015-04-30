@@ -2,6 +2,7 @@ import sqlite3
 from functools import wraps
 from flask import Flask, render_template, request, session, g, flash, url_for, redirect
 from twilio.rest import TwilioRestClient
+import twilio.twiml
 
 app = Flask(__name__)
 app.config.from_object('_config')
@@ -9,7 +10,7 @@ app.config.from_object('_config')
 # user_info(phone_number TEXT, zipcode TEXT, verified INT, subscribed INT)
 def connect_db():
     """change this later so that we only need a one-liner to connect to
-    the user_info table and get a curosr object""" 
+    the user_info table and get a cursor object""" 
     return sqlite3.connect(app.config['DATABASE'])
 
 
@@ -23,14 +24,14 @@ def make_sure_user_doesnt_already_exist(entered_phone_number):
     This function should be called by add_user()
     """
     with connect_db() as connection:
+        connection.text_factory = str
         c = connection.cursor()
-        c.execute("SELECT * FROM user_info WHERE phone_number=?", entered_phone_number)
+        c.execute("SELECT * FROM user_info WHERE phone_number=?", (entered_phone_number,))
         info = c.fetchall()
-    if info[0] == entered_phone_number:
-        flash("This phone number is already subscribed at zip code %s. If you would like to add a different number, please try again.", info[1])
-        return redirect(url_for('home'))
+    if not info:
+        return True 
     else:
-        pass
+        return (False, info)
 
 
 ##################################################################################
@@ -46,6 +47,19 @@ def send_test_message_to_new_user(phone_number):
 def grab_new_user_response():
     """receives response from new user and maybe eventually
     parses it out for different actions."""
+#    from_number = request.values.get('From', None)
+#    with connect_db() as connection:
+#        c = connection.cursor()
+#        c.execute('
+#        if from_number in callers:
+#            message = callers[from_number] + ", thanks for the message!"
+#        else:
+#            message = "Monkey, thanks for the message!"
+# 
+#    resp = twilio.twiml.Response()
+#    resp.message(message)
+ 
+#    return str(resp)
     pass
 
 
@@ -69,10 +83,12 @@ def add_user():
     if not zipcode or not phone_number:
         flash("Please fill out all fields.")
         return redirect(url_for('home'))
-    make_sure_user_doesnt_already_exist(phone_number)
-    with connect_db() as connection:
-        c = connection.cursor()
-        c.execute("INSERT INTO user_info VALUES(?,?,?,?)", [phone_number, zipcode, 0, 0])
-    send_text_message(phone_number, "Greetings from RainMan.io! To subscribe and receive weather updates from us, text any message back and you'll be good to go, dude.")
-    flash("Thanks for signing up! You will receive a text message with instructions to subscribe and customize your RainMain.io experience!")
+    if make_sure_user_doesnt_already_exist(phone_number) == True:
+        with connect_db() as connection:
+            c = connection.cursor()
+            c.execute("INSERT INTO user_info VALUES(?,?,?,?)", [phone_number, zipcode, 0, 0])
+        send_text_message(phone_number, "Greetings from RainMan.io! To subscribe and receive weather updates from us, text any message back and you'll be good to go, dude.")
+        flash("Thanks for signing up! You will receive a text message with instructions to subscribe and customize your RainMain.io experience!")
+    else:
+        flash("That phone number is already subscribed at zip code %s. If you would like to add a different number, please try again." % make_sure_user_doesnt_already_exist(phone_number)[1][0][1])
     return redirect(url_for('home'))

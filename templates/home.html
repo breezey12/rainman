@@ -4,7 +4,7 @@
         {{ message }}
     {% endfor %}
     <h2>Welcome to RainMan.io!</h2>
-    <h3>Whether the weather brings rain or shine, you will always be prepared with our timely and convenient SMS reminders of the forecast and what clothing/apparel will make you most prepared for a comfortable day ahead!</h3>
+    <h3>Whether the weather brings rain or shine, you will always be prepared with our timely and convenient SMS forecast reminders including what clothing & apparel will make you most prepared for a comfortable day ahead.</h3>
     <h3>Sign up to get convenient SMS weather updates!</h3>
     <form method="post" action="{{ url_for('add_user') }}">
         Phone Number:<input type="text" name="phone_number" value="{{ request.form.phone_number }}">
