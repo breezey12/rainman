@@ -5,7 +5,7 @@ from twilio.rest import TwilioRestClient
 import twilio.twiml
 
 app = Flask(__name__)
-app.config.from_object('_config')
+app.config.from_object('.env')
 
 # user_info(phone_number TEXT, zipcode TEXT, verified INT, subscribed INT)
 def connect_db():
@@ -16,7 +16,7 @@ def connect_db():
 
 def send_text_message(user_phone_number, message):
     client = TwilioRestClient(app.config['ACCOUNT_SID'], app.config['AUTH_TOKEN'])
-    client.messages.create(to=user_phone_number, from_="+18024488492", body=message)
+    client.messages.create(to=user_phone_number, from_=app.config['TWILIO_NUMBER'], body=message)
 
 
 def make_sure_user_doesnt_already_exist(entered_phone_number):
