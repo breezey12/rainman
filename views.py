@@ -3,9 +3,10 @@ from functools import wraps
 from flask import Flask, render_template, request, session, g, flash, url_for, redirect
 from twilio.rest import TwilioRestClient
 import twilio.twiml
+import os
 
 app = Flask(__name__)
-app.config.from_object('.env')
+app.config.from_object(os.environ['APP_SETTINGS'])
 
 # user_info(phone_number TEXT, zipcode TEXT, verified INT, subscribed INT)
 def connect_db():
